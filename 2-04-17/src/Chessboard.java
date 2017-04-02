@@ -15,6 +15,7 @@ public class Chessboard implements Comparable<Chessboard> {
 		return compareH-this.getHeuristic();
 	}
 
+	// Chessboard(c1,c2);
 	// Genetic Algorithm Child Constructor
 	Chessboard(Chessboard c1, Chessboard c2){
 		this.n = c1.l.size();
@@ -25,6 +26,7 @@ public class Chessboard implements Comparable<Chessboard> {
 			this.l.set(i,c2.l.get(i));
 		
 		}
+		// 50% chance for random mutation
 		if(r.nextInt(n*2) < n){
 			boolean added=false;
 			while(added==false){
@@ -38,6 +40,7 @@ public class Chessboard implements Comparable<Chessboard> {
 		
 	}
 
+	// Chessboard(n);
 	// Standard Constructor
 	Chessboard(int n){
 		
@@ -51,12 +54,14 @@ public class Chessboard implements Comparable<Chessboard> {
 		}
 	}
 
+	// Chessboard(l);
 	// Chessboard using provided ArrayList	
 	Chessboard(ArrayList<Point> l){
 		this.l=l;
 		n=l.size();
 	}
 	
+	// printBoard();
 	void printBoard(){
 		Point p;
 		System.out.println(" ");
@@ -72,12 +77,8 @@ public class Chessboard implements Comparable<Chessboard> {
 			System.out.println("");
 		}
 	}
-	// Returns the probability of selecting a 'risky' move for annealing search algorithm
-	double getP(int lowH, int curH, double temp){
-		double p = Math.exp(-1*((lowH-curH)/temp));
-		return p;
-	}
 
+	// getHeuristic();
 	// Gets the Heuristic of this board
 	int getHeuristic(){
 		int h=0;
@@ -103,6 +104,7 @@ public class Chessboard implements Comparable<Chessboard> {
 		return h;
 	}
 
+	// boardBackup();
 	// Returns a hard copy of the current 'l' state
 	ArrayList<Point>boardBackup(){
 		ArrayList<Point> out = new ArrayList<Point>();
@@ -114,6 +116,7 @@ public class Chessboard implements Comparable<Chessboard> {
 		return out;
 	}
 
+	// boardBackup(l);
 	// Returns a hard copy of a provided ArrayList<Point>
 	ArrayList<Point>boardBackup(ArrayList<Point> l){
 		ArrayList<Point> out = new ArrayList<Point>();
@@ -125,74 +128,57 @@ public class Chessboard implements Comparable<Chessboard> {
 		return out;
 	}	
 
-	// Evaluates a movement to a point provided
-	// Accepts inputs ArrayList containing possible moves, nextP point to test, c the index of the point to be placed in 'l'
-	// lowH the heuristic to beat, temp the temperature to provide to getP 
-	// boolean annealing to decide if annealing should be performed
-	ArrayList<Point> EvaluatePosition(ArrayList<Point> costs, Point nextP, int c, int lowH, double temp, boolean annealing){
-		int curX=l.get(c).x;
-		int curY=l.get(c).y;
-		int curH;
-		// If nextP is not already duplicated in 'l'
-		if(!l.contains(nextP)){					
-			l.set(c,nextP);
-			curH = getHeuristic();
-			if(curH < lowH){
-				lowH = curH;
-				costs.clear();
-				costs.add(nextP);
-				sMoves=0;
-				l.set(c,new Point(curX,curY));
-			}else if((curH == lowH) && sMoves < 100){
-				costs.add(nextP);
-					sMoves++;
-			// Ignore if regular Hillclimb
-			}else if(curH > lowH && annealing==true){
-				double rval = 0 + (1 - 0) * r.nextDouble();
-				double pval = getP(lowH,curH,temp);
-				if(rval < pval){
-					costs.add(nextP);
-				}
-			}
-			l.set(c,new Point(curX,curY));
-		}
-		return costs;
-	}
-
+	//getNeighbours(p)
+	// Returns ArrayList of neighbours for a given point P
 	ArrayList<Point> getNeighbours(Point p){
 		ArrayList<Point> N = new ArrayList<Point>();
 		Point nextP;
 		int curX=p.x;
 		int curY=p.y;
 
+		// If North Space Available
 		if(curY < n-1){
 			nextP = new Point(curX, curY+1);
 			N.add(nextP);
 		}
+
+		// If South Space Available
 		if(curY > 0) {
 			nextP = new Point(curX, curY-1);
 			N.add(nextP);
 		}
+
+		// If West Space Available
 		if(curX < n-1){
 			nextP = new Point(curX+1, curY);
 			N.add(nextP);
 		}
+
+		// If East Space Available
 		if(curX > 0) {
 			nextP = new Point(curX-1, curY);
 			N.add(nextP);
 		}
+
+		// If Northwest Space Available
 		if((curX < n-1) && (curY < n-1)){
 			nextP = new Point(curX+1, curY+1);
 			N.add(nextP);
 		}
+
+		// If Southeast Space Available
 		if((curX > 0) && (curY > 0)) {
 			nextP = new Point(curX-1, curY-1);
 			N.add(nextP);
 		}
+
+		// If Southwest Space Available
 		if((curX < n-1) && (curY > 0)){
 			nextP = new Point(curX+1, curY-1);
 			N.add(nextP);
 		}
+
+		// If Northeast Space Available
 		if((curX > 0) && (curY < n-1)) {
 			nextP = new Point(curX-1, curY+1);
 			N.add(nextP);
@@ -200,8 +186,11 @@ public class Chessboard implements Comparable<Chessboard> {
 		return N;
 	}
 
+	// getProbability(temp, delta)
+	// Returns the probability of a 
 	boolean getProbability(double temp, int delta){
 		
+		// If current H is lower than original H
 		if(delta < 0){
 			return true;
 		}
@@ -219,7 +208,6 @@ public class Chessboard implements Comparable<Chessboard> {
 	
 	// Best-choice Hillclimb Algorithm
 	boolean HillClimb(){
-		
 		ArrayList<Point> N = new ArrayList<Point>();
 		int attempts = 100;
 		int lowH=getHeuristic();
@@ -240,20 +228,14 @@ public class Chessboard implements Comparable<Chessboard> {
 				
 					if(curH < lowH){
 						lowH=curH;
-						//System.out.println("Moving upwards to ("+l.get(c).x+","+l.get(c).y+")");
-						// Keep it set
 					} else if((curH == lowH) && sMoves < 100){
-						//System.out.println("Moving sideways to ("+l.get(c).x+","+l.get(c).y+")");
 						sMoves++;
-						// Keep it set
 					} else {
-						//System.out.println("Staying at ("+curPos.x+","+curPos.y+")");
 						l.set(c,curPos);
 						availableMoves--;
 					}
 				}
 			}
-			//printBoard();
 			steps++;			
 			if(getHeuristic()==0){
 				return true;
@@ -264,98 +246,81 @@ public class Chessboard implements Comparable<Chessboard> {
 		}
 		return false;
 	}
+
+	// Annealing();
+	// Simulated Annealing Algorithm Function
 	boolean Annealing(){
 		
+		// ArrayList for Neighbours
 		ArrayList<Point> N = new ArrayList<Point>();
-		int attempts = 100;
-		int lowH=getHeuristic();
-		int availableMoves=n;
-		int steps=0;
 
-		// Annealing Variables
-		ArrayDeque<Point> Tabu = new ArrayDeque<Point>();
-		
+		// Current Heuristic (h to beat)
+		int lowH=getHeuristic();
+
 		double temp = 5;
+
+		// Amount temp is cooled by each iteration
 		double coolingFactor=0.05;
+
 		double currentStabilizer=5;
+
+		// Amount Stabilizer is multiplied by each iteration
 		double stabilizingFactor=1.08;
+
 		double freezingTemp=0.0; 
+
 		Point curPos;
+
+		
 		while(temp > freezingTemp){
 			for(int i=0; i<currentStabilizer; i++){
 				for(int c=0; c<n; c++){	// For each queen on the board
-					//lowH=getHeuristic();
+					// get current position from 'l'
 					curPos=l.get(c);
+
+					// get neighbours of curPos
 					N = getNeighbours(curPos);
+
+					// Select random member of N
 					int index = r.nextInt(N.size());
 					Point insert=N.get(index);
+
+					// If insert is not a duplicate
 					if(!l.contains(insert)){
+						
+						// Insert to 'l' and get Heuristic
 						l.set(c,N.get(index));
 						int curH=getHeuristic();
+
+						// Current h is better
 						if(curH < lowH){
 							lowH=curH;
-							//System.out.println("Uphill movement");
-							//System.out.println("Moving to ("+l.get(c).x+","+l.get(c).y+")");
-							// Keep it set
+
+						// Current h is just as good
 						} else if((curH == lowH) && sMoves < 100){
-							//System.out.println("Sideways movement");
-							//System.out.println("Moving to ("+l.get(c).x+","+l.get(c).y+")");
-							// Keep it set
-							//sMoves++;
+
+						// Current h is worse
 						} else {
-							//System.out.println("Downhill Movement");
-							//System.out.println("Temp: "+temp+" Current Delta: "+(curH-lowH));
+							// Get probability to accept move
 							boolean b = getProbability(temp,curH-lowH);
-							//System.out.println("B: "+b);
 							if(b){
-								//System.out.println("Moving to ("+l.get(c).x+","+l.get(c).y+")");
 							}
 							else{
 								l.set(c,curPos);
-								//System.out.println("Staying at ("+curPos.x+","+curPos.y+")");
 							}
 						}
 					}
-					//printBoard();
 				}
-				//System.out.println(getHeuristic());
-				//printBoard();
-				steps++;
-				//System.out.println("Temperature: "+temp+" Stabilizer: "+currentStabilizer);			
+				// If goal state is reached		
 				if(getHeuristic()==0){
 					return true;
 				}
 			}
 			temp = temp - coolingFactor;
 			currentStabilizer = currentStabilizer * stabilizingFactor;
-			//System.out.println("Temperature: "+temp+" Stabilizer: "+currentStabilizer);
 			
 		}
+		// If goal state is not reached once temperature has cooled
 		return false;
-	}
-
-	Point Reproduce(Point p1, Point p2){
-		Point offspring = new Point(0,0);		
-
-		return offspring;
-	}
-
-	void GeneticAlgorithm(){
-		// ArrayList to store mutations
-		//ArrayList<Point> M = new ArrayList<Point>();
-		boolean added=false;
-		for(int i=0; i<n; i++){
-			while(added == false){
-				int p1=r.nextInt(n);
-				int p2=r.nextInt(n);
-				Point newPoint = new Point(l.get(p1).x,l.get(p2).y);
-				if(!l.contains(newPoint)){				
-					l.add(newPoint);
-					added=true;
-				}
-			}
-			added=false;
-		}
-		printBoard();
 	}
 }
