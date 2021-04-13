@@ -1,4 +1,15 @@
-# NQueens
-Repository for my solution to the N Queens problem, using Local Search algorithms and implemented using Java.
-Report Link: https://docs.google.com/document/d/1KwkqtRXgs9w7EQzZzSMMlRkxRdLN3FLFeizYzvHg9PM/edit?usp=sharing
-Spreadsheet Link: https://docs.google.com/spreadsheets/d/1W_6KJTBHZBbr290TRG0_qsnQR6cwJoqMDEdThFv-f9Y/edit?usp=sharing
+# N Queens Local Search
+## An implementation of several local search algorithms for solving the N Queens problem
+### Created by Damon Murdoch ([@SirScrubbington](https://twitter.com/SirScrubbington))
+
+## Description
+Repository for my solution to the N Queens problem, using Local Search algorithms and implemented using Java. The following algorithms have been implemented.
+
+1. Single Hill-Climbing Algorithm
+2. Random Restart Hill-Climbing Algorithm
+3. Simulated Annealing Algorithm
+4. Genetic Algorithm
+
+This application was created for an artificial intelligence subject in my second
+year of university in 2017. As such, it is a legacy repository which will no longer
+be developed or updated.
